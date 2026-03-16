@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New RFQ Alert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #dc2626;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .content {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .alert-badge {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 10px 20px;
+            border-radius: 6px;
+            display: inline-block;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🔔 New RFQ Received</h1>
+    </div>
+    <div class="content">
+        <div class="alert-badge">ACTION REQUIRED</div>
+
+        <h2>RFQ #{{rfqNumber}}</h2>
+
+        <p>A new Request for Quote has been submitted and requires your attention.</p>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Customer Name</div>
+                <div class="info-value">{{customerName}}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Company</div>
+                <div class="info-value">{{company}}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{customerEmail}}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Phone</div>
+                <div class="info-value">{{customerPhone}}</div>
+            </div>
+        </div>
+
+        <div style="background: white; padding: 15px; border-radius: 6px; margin: 20px 0;">
+            <p><strong>Items Requested:</strong> {{itemCount}}</p>
+            <p><strong>Submitted:</strong> {{submittedAt}}</p>
+        </div>
+
+        <a href="{{viewUrl}}" class="cta-button">View RFQ Details →</a>
+
+        <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
+            Please review and respond to this RFQ within 24 hours to maintain our service standards.
+        </p>
+    </div>
+    <div class="footer">
+        <p>© 2026 Kali MHS Admin System</p>
+    </div>
+</body>
+
+</html>

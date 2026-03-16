@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFQ Confirmation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .rfq-number { font-size: 24px; font-weight: bold; color: #2563eb; margin: 20px 0; }
+        .info-box { background: white; padding: 15px; border-left: 4px solid #2563eb; margin: 15px 0; }
+        .footer { text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background: #f3f4f6; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Request for Quote Received</h1>
+    </div>
+    <div class="content">
+        <p>Dear {{customerName}},</p>
+        
+        <p>Thank you for submitting your Request for Quote. We have received your inquiry and our team will review it shortly.</p>
+        
+        <div class="rfq-number">RFQ #{{rfqNumber}}</div>
+        
+        <div class="info-box">
+            <h3>Requested Items</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                    <tr>
+                        <td>{{this.productName}}</td>
+                        <td>{{this.quantity}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        
+        {{#if projectDetails}}
+        <div class="info-box">
+            <h3>Project Details</h3>
+            <p><strong>Project Name:</strong> {{projectDetails.projectName}}</p>
+            <p><strong>Timeline:</strong> {{projectDetails.timeline}}</p>
+            {{#if projectDetails.budget}}
+            <p><strong>Budget Range:</strong> {{projectDetails.budget}}</p>
+            {{/if}}
+        </div>
+        {{/if}}
+        
+        <p><strong>Submitted:</strong> {{submittedAt}}</p>
+        
+        <p>Our sales team will contact you within 24-48 business hours with a detailed quotation.</p>
+        
+        <p>If you have any questions in the meantime, please don't hesitate to reach out.</p>
+        
+        <p>Best regards,<br>
+        <strong>Kali MHS Sales Team</strong></p>
+    </div>
+    <div class="footer">
+        <p>© 2026 Kali MHS. All rights reserved.</p>
+        <p>This is an automated message. Please do not reply to this email.</p>
+    </div>
+</body>
+</html>

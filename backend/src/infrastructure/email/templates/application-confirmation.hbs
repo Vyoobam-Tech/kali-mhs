@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #059669;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .content {
+            background: #f9fafb;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .success-icon {
+            font-size: 48px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .job-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #059669;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Application Received</h1>
+    </div>
+    <div class="content">
+        <div class="success-icon">✅</div>
+
+        <p>Dear {{applicantName}},</p>
+
+        <p>Thank you for your interest in joining the Kali MHS team!</p>
+
+        <div class="job-title">{{jobTitle}}</div>
+
+        <div class="info-box">
+            <h3>What Happens Next?</h3>
+            <ul>
+                <li>Our HR team will review your application</li>
+                <li>Qualified candidates will be contacted within 7-10 business days</li>
+                <li>You may be invited for an interview if your profile matches our requirements</li>
+            </ul>
+        </div>
+
+        <p><strong>Application Submitted:</strong> {{submittedAt}}</p>
+
+        <p>We appreciate the time you've taken to apply and look forward to learning more about your qualifications.</p>
+
+        <p>Best regards,<br>
+            <strong>Kali MHS HR Team</strong>
+        </p>
+    </div>
+    <div class="footer">
+        <p>© 2026 Kali MHS. All rights reserved.</p>
+        <p>This is an automated message. Please do not reply to this email.</p>
+    </div>
+</body>
+
+</html>

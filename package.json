@@ -1,0 +1,28 @@
+{
+  "name": "kali-mhs",
+  "version": "1.0.0",
+  "description": "Kali MHS Enterprise MERN Application - Monorepo Root",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd backend && npm run build && cd ../frontend && npm run build",
+    "docker:up": "docker-compose up",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "docker:restart": "docker-compose down && docker-compose up --build"
+  },
+  "keywords": [
+    "kali-mhs",
+    "mern",
+    "enterprise",
+    "clean-architecture"
+  ],
+  "author": "Kali MHS Team",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

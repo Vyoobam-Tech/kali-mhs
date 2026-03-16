@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment files — NEVER commit these
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+backend/.env
+frontend/.env.local
+frontend/.env.production.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (local dev only)
+backend/uploads/
+
+# IDE
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# TypeScript compiled output
+backend/dist/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.tgz
+.yarn-integrity
+
+# Claude Code
+.claude/
+
+# GitHub folder (contains large binary files)
+.github/
+
+# Large binary files
+*.pdf
