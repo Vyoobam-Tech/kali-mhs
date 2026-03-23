@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const PROTECTED_PREFIXES = ['/dashboard'];
-const AUTH_ROUTES = ['/login', '/register'];
+const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/reset-password'];
 
 /**
  * Next.js Edge Middleware — runs before every matched request.
@@ -45,5 +45,7 @@ export const config = {
         '/dashboard/:path*',
         '/login',
         '/register',
+        '/forgot-password',
+        '/reset-password',
     ],
 };

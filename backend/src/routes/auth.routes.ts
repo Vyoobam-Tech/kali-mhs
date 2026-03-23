@@ -7,6 +7,8 @@ import {
     registerSchema,
     loginSchema,
     changePasswordSchema,
+    forgotPasswordSchema,
+    resetPasswordSchema,
 } from '@validations/auth.validation';
 
 const router = Router();
@@ -45,6 +47,20 @@ router.get('/profile', authenticate, AuthController.getProfile);
  * @access  Private
  */
 router.post('/change-password', authenticate, validate(changePasswordSchema), AuthController.changePassword);
+
+/**
+ * @route   POST /api/v1/auth/forgot-password
+ * @desc    Request a password reset link
+ * @access  Public
+ */
+router.post('/forgot-password', authRateLimiter, validate(forgotPasswordSchema), AuthController.forgotPassword);
+
+/**
+ * @route   POST /api/v1/auth/reset-password
+ * @desc    Reset password using token from email link
+ * @access  Public
+ */
+router.post('/reset-password', validate(resetPasswordSchema), AuthController.resetPassword);
 
 /**
  * @route   POST /api/v1/auth/logout

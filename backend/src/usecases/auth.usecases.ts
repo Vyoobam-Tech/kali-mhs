@@ -1,6 +1,8 @@
+import crypto from 'crypto';
 import { UserModel, IUserDocument } from '@infrastructure/database/models/User.model';
 import { JWTService } from '@infrastructure/services/jwt.service';
 import { PasswordUtil } from '@utils/password.util';
+import { emailService } from '@infrastructure/email/emailService';
 import {
     ICreateUser,
     ILoginCredentials,
@@ -10,6 +12,9 @@ import {
     UserStatus,
 } from '@domain/user.interface';
 import { AppError } from '@middlewares/errorHandler';
+import { config } from '@config/env';
+
+const RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 
 /**
  * Authentication Use Cases
@@ -208,6 +213,72 @@ export class AuthUseCases {
         user.password = hashedPassword;
         await user.save();
         await UserModel.findByIdAndUpdate(user._id, { $inc: { tokenVersion: 1 } });
+    }
+
+    /**
+     * Forgot password — generate reset token, store hash in DB.
+     * In development the raw reset URL is returned so it can be shown in the UI.
+     * In staging/production an email is sent instead.
+     *
+     * @returns resetUrl only in development; undefined otherwise
+     */
+    static async forgotPassword(email: string): Promise<{ resetUrl?: string }> {
+        const user = await UserModel.findOne({ email: email.toLowerCase() });
+
+        // Always return success to avoid email enumeration
+        if (!user || user.status !== UserStatus.ACTIVE) {
+            return {};
+        }
+
+        // Generate a random token and store its SHA-256 hash
+        const rawToken = crypto.randomBytes(32).toString('hex');
+        const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+        await UserModel.findByIdAndUpdate(user._id, {
+            passwordResetToken: hashedToken,
+            passwordResetExpires: new Date(Date.now() + RESET_TOKEN_EXPIRY_MS),
+        });
+
+        const resetUrl = `${config.frontend.url}/reset-password?token=${rawToken}`;
+
+        if (config.server.isDevelopment) {
+            // Return the URL directly so the UI can display it without needing SMTP
+            return { resetUrl };
+        }
+
+        // Send email in staging / production
+        await emailService.sendPasswordResetEmail(user.email, user.firstName, resetUrl);
+        return {};
+    }
+
+    /**
+     * Reset password using the raw token from the reset link.
+     */
+    static async resetPassword(rawToken: string, newPassword: string): Promise<void> {
+        const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+
+        const user = await UserModel.findOne({
+            passwordResetToken: hashedToken,
+            passwordResetExpires: { $gt: new Date() },
+        }).select('+passwordResetToken +passwordResetExpires');
+
+        if (!user) {
+            throw new AppError(400, 'Reset token is invalid or has expired');
+        }
+
+        const passwordValidation = PasswordUtil.validateStrength(newPassword);
+        if (!passwordValidation.valid) {
+            throw new AppError(400, 'Password does not meet requirements', true, passwordValidation.errors);
+        }
+
+        user.password = await PasswordUtil.hash(newPassword);
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        // Bump tokenVersion to invalidate all existing sessions
+        await UserModel.findByIdAndUpdate(user._id, {
+            $inc: { tokenVersion: 1 },
+        });
+        await user.save();
     }
 
     /**

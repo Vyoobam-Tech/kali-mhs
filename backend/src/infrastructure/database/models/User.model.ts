@@ -54,6 +54,14 @@ const userSchema = new Schema<IUserDocument>(
         lastLogin: {
             type: Date,
         },
+        passwordResetToken: {
+            type: String,
+            select: false,
+        },
+        passwordResetExpires: {
+            type: Date,
+            select: false,
+        },
         createdBy: {
             type: Schema.Types.ObjectId,
             ref: 'User',

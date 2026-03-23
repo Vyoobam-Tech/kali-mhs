@@ -105,6 +105,25 @@ export class EmailService {
     }
 
     /**
+     * Send password reset email
+     */
+    async sendPasswordResetEmail(to: string, firstName: string, resetUrl: string): Promise<void> {
+        await this.sendEmail({
+            to,
+            subject: 'Reset your Kali MHS password',
+            html: `
+                <p>Hi ${firstName},</p>
+                <p>We received a request to reset your password. Click the link below to choose a new one:</p>
+                <p><a href="${resetUrl}" style="background:#0f172a;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;display:inline-block;">Reset Password</a></p>
+                <p>This link expires in <strong>1 hour</strong>.</p>
+                <p>If you didn't request a password reset, you can safely ignore this email.</p>
+                <hr/>
+                <p style="font-size:12px;color:#666;">Kali MHS &mdash; ${resetUrl}</p>
+            `,
+        });
+    }
+
+    /**
      * Send RFQ confirmation to customer
      */
     async sendRFQConfirmation(to: string, rfqData: any): Promise<void> {

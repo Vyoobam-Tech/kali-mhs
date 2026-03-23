@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AuthUseCases } from '@usecases/auth.usecases';
 import { asyncHandler } from '@middlewares/errorHandler';
 import { AppError } from '@middlewares/errorHandler';
-import { RegisterInput, LoginInput, ChangePasswordInput } from '@validations/auth.validation';
+import { RegisterInput, LoginInput, ChangePasswordInput, ForgotPasswordInput, ResetPasswordInput } from '@validations/auth.validation';
 import { config } from '@config/env';
 
 // 30 days in milliseconds
@@ -16,9 +16,12 @@ function setRefreshCookie(res: Response, refreshToken: string): void {
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: config.server.isProduction,
-        sameSite: 'strict',
+        // 'none' required in production because frontend (Vercel) and backend
+        // (Railway) are on different domains — cross-site cookies need SameSite=None + Secure.
+        // 'strict' is fine for local development (same hostname, different ports).
+        sameSite: config.server.isProduction ? 'none' : 'strict',
         maxAge: REFRESH_TOKEN_MAX_AGE,
-        path: '/api/v1/auth/refresh',
+        path: '/',
     });
 }
 
@@ -149,6 +152,38 @@ export class AuthController {
     });
 
     /**
+     * Forgot password
+     * POST /api/v1/auth/forgot-password
+     */
+    static forgotPassword = asyncHandler(async (req: Request, res: Response) => {
+        const { email }: ForgotPasswordInput = req.body;
+
+        const { resetUrl } = await AuthUseCases.forgotPassword(email);
+
+        res.status(200).json({
+            status: 'success',
+            message: 'If that email is registered you will receive a reset link shortly.',
+            // Only included in development so the UI can display it without SMTP
+            ...(resetUrl ? { data: { resetUrl } } : {}),
+        });
+    });
+
+    /**
+     * Reset password
+     * POST /api/v1/auth/reset-password
+     */
+    static resetPassword = asyncHandler(async (req: Request, res: Response) => {
+        const { token, newPassword }: ResetPasswordInput = req.body;
+
+        await AuthUseCases.resetPassword(token, newPassword);
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Password has been reset. You can now log in with your new password.',
+        });
+    });
+
+    /**
      * Logout
      * POST /api/v1/auth/logout
      * Clears the HttpOnly refresh token cookie
@@ -158,7 +193,7 @@ export class AuthController {
             await AuthUseCases.logout(req.user.userId);
         }
 
-        res.clearCookie('refreshToken', { path: '/api/v1/auth/refresh' });
+        res.clearCookie('refreshToken', { path: '/' });
 
         res.status(200).json({
             status: 'success',

@@ -31,6 +31,8 @@ export interface IUser {
     status: UserStatus;
     tokenVersion: number;
     lastLogin?: Date;
+    passwordResetToken?: string;
+    passwordResetExpires?: Date;
     createdAt: Date;
     updatedAt: Date;
     createdBy?: string;

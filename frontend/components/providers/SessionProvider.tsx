@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { authApi } from '@/lib/api/auth';
 import { useAuthStore } from '@/lib/store/authStore';
 
@@ -11,23 +11,37 @@ import { useAuthStore } from '@/lib/store/authStore';
  * POST /auth/refresh. The server reads the HttpOnly refresh token cookie
  * and returns a fresh access token + user profile.
  *
- * This runs once per page load / hard refresh.
- * On subsequent navigations (client-side routing), the in-memory store persists.
+ * On client-side navigation (e.g. after login), the in-memory store is already
+ * populated so children render immediately without waiting.
+ *
+ * On hard refresh, children are held until the refresh call resolves so that
+ * protected API calls are never made without a valid access token.
  */
 export function SessionProvider({ children }: { children: React.ReactNode }) {
     const setAuth = useAuthStore((state) => state.setAuth);
     const restored = useRef(false);
+    // Skip the loading gate if we already have an access token in memory
+    // (happens on client-side navigation — the Zustand store persists).
+    const [ready, setReady] = useState(() => useAuthStore.getState().isAuthenticated);
 
     useEffect(() => {
         if (restored.current) return;
         restored.current = true;
 
+        // Already authenticated via in-memory store — nothing to restore.
+        if (useAuthStore.getState().isAuthenticated) {
+            setReady(true);
+            return;
+        }
+
         authApi.refresh().then((data) => {
             if (data?.user && data?.tokens?.accessToken) {
                 setAuth(data.user, data.tokens.accessToken);
             }
-        });
+        }).finally(() => setReady(true));
     }, [setAuth]);
+
+    if (!ready) return null;
 
     return <>{children}</>;
 }

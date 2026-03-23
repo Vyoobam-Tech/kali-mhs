@@ -89,6 +89,25 @@ export const changePasswordSchema = z.object({
 });
 
 /**
+ * Forgot Password Schema
+ */
+export const forgotPasswordSchema = z.object({
+    body: z.object({
+        email: emailSchema,
+    }),
+});
+
+/**
+ * Reset Password Schema
+ */
+export const resetPasswordSchema = z.object({
+    body: z.object({
+        token: z.string().min(1, 'Reset token is required'),
+        newPassword: passwordSchema,
+    }),
+});
+
+/**
  * Get User By ID Schema
  */
 export const getUserByIdSchema = z.object({
@@ -105,3 +124,5 @@ export type LoginInput = z.infer<typeof loginSchema>['body'];
 export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>['body'];
 export type UpdateUserInput = z.infer<typeof updateUserSchema>['body'];
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>['body'];
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>['body'];
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>['body'];
