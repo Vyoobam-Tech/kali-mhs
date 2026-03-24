@@ -31,6 +31,7 @@ class Server {
             "https://kalimhs.vercel.app",
             "http://localhost:3000"
         ],
+        methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
         credentials: true
     }));
 
