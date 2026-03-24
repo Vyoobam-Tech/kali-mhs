@@ -29,16 +29,19 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         restored.current = true;
 
         // Already authenticated via in-memory store — nothing to restore.
-        if (useAuthStore.getState().isAuthenticated) {
-            setReady(true);
-            return;
-        }
+        // ready is already true from the useState in
+        // itializer in this case.
+        if (useAuthStore.getState().isAuthenticated) return;
 
         authApi.refresh().then((data) => {
             if (data?.user && data?.tokens?.accessToken) {
                 setAuth(data.user, data.tokens.accessToken);
             }
-        }).finally(() => setReady(true));
+            // Always unblock children. If the session was invalid the backend
+            // cleared the cookie; any protected API call will return 401 and
+            // client.ts will redirect to /login automatically.
+            setReady(true);
+        });
     }, [setAuth]);
 
     if (!ready) return null;

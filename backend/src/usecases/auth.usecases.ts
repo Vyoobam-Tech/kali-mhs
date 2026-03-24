@@ -118,7 +118,7 @@ export class AuthUseCases {
      * @param refreshToken - Refresh token
      * @returns New authentication tokens
      */
-    static async refreshToken(refreshToken: string): Promise<IAuthTokens> {
+    static async refreshToken(refreshToken: string): Promise<{ user: IUserResponse; tokens: IAuthTokens }> {
         // Verify refresh token
         const payload = JWTService.verifyRefreshToken(refreshToken);
 
@@ -134,23 +134,23 @@ export class AuthUseCases {
             throw new AppError(403, 'Account is inactive or suspended');
         }
 
-        // Reject replayed or revoked refresh tokens
+        // Reject tokens that were revoked by logout or password-change
         if (payload.tokenVersion !== user.tokenVersion) {
             throw new AppError(401, 'Refresh token has been revoked');
         }
 
-        // Increment tokenVersion in DB to invalidate the consumed refresh token
-        const nextVersion = user.tokenVersion + 1;
-        await UserModel.findByIdAndUpdate(user._id, { tokenVersion: nextVersion });
-
+        // Re-issue tokens with the SAME tokenVersion (no rotation).
+        // tokenVersion only increments on logout / password-change so that
+        // concurrent refresh calls (page load, Strict Mode re-mount, etc.)
+        // all succeed instead of the second one failing with "revoked".
         const tokens = JWTService.generateTokenPair(
             user._id.toString(),
             user.email,
             user.role,
-            nextVersion
+            user.tokenVersion
         );
 
-        return tokens;
+        return { user: this.toUserResponse(user), tokens };
     }
 
     /**

@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { useAuthStore } from '@/lib/store/authStore';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+// Use relative URL so all requests go through Next.js → backend proxy (next.config.ts rewrites).
+// This ensures the refreshToken cookie is always same-origin, avoiding SameSite/cross-port issues.
+const baseURL = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
 
 export const apiClient = axios.create({
     baseURL,

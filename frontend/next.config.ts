@@ -66,16 +66,19 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // ── API Proxy (production) ────────────────────────────────────
-  // Routes /api/v1/* through Next.js to the backend Vercel deployment.
-  // This keeps the refreshToken cookie on the frontend domain so the
-  // middleware can read it. Only active when BACKEND_URL is set (i.e. Vercel).
+  // ── API Proxy ─────────────────────────────────────────────────────
+  // Routes /api/v1/* through Next.js to the backend.
+  // This keeps the refreshToken cookie on the frontend origin so:
+  //   - The middleware can read it (it only sees cookies from its own origin).
+  //   - The browser sends it on every same-origin request (no SameSite issues).
+  // Development: falls back to http://localhost:5000.
+  // Production: set BACKEND_URL to the deployed backend URL.
   async rewrites() {
-    if (!process.env.BACKEND_URL) return [];
+    const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
     return [
       {
         source: '/api/v1/:path*',
-        destination: `${process.env.BACKEND_URL}/api/v1/:path*`,
+        destination: `${backendUrl}/api/v1/:path*`,
       },
     ];
   },

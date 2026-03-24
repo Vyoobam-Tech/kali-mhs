@@ -91,20 +91,33 @@ export class AuthController {
             throw new AppError(401, 'Refresh token not provided');
         }
 
-        const tokens = await AuthUseCases.refreshToken(refreshToken);
+        try {
+            const { user, tokens } = await AuthUseCases.refreshToken(refreshToken);
 
-        // Rotate the refresh token cookie
-        setRefreshCookie(res, tokens.refreshToken);
+            // Rotate the refresh token cookie
+            setRefreshCookie(res, tokens.refreshToken);
 
-        res.status(200).json({
-            status: 'success',
-            message: 'Token refreshed successfully',
-            data: {
-                tokens: {
-                    accessToken: tokens.accessToken,
+            res.status(200).json({
+                status: 'success',
+                message: 'Token refreshed successfully',
+                data: {
+                    user,
+                    tokens: {
+                        accessToken: tokens.accessToken,
+                    },
                 },
-            },
-        });
+            });
+        } catch (error) {
+            // Clear the invalid/expired cookie so the Next.js middleware stops
+            // redirecting the user back to /dashboard, breaking the redirect loop.
+            res.clearCookie('refreshToken', {
+                httpOnly: true,
+                secure: config.server.isProduction,
+                sameSite: config.server.isProduction ? 'none' : 'strict',
+                path: '/',
+            });
+            throw error;
+        }
     });
 
     /**
