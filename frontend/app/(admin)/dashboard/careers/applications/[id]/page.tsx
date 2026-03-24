@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/select';
 
 import { careerApi } from '@/lib/api/careers';
+import { apiClient } from '@/lib/api/client';
 import { ApplicationStatus } from '@/lib/types/career';
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -142,11 +143,7 @@ export default function ApplicationDetailPage() {
 
     const scoreMutation = useMutation({
         mutationFn: () =>
-            fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/v1/careers/applications/${appId}/score`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
-                body: JSON.stringify(scores),
-            }).then(r => r.json()),
+            apiClient.post(`/careers/applications/${appId}/score`, scores).then(r => r.data),
         onSuccess: () => {
             toast.success('Scores saved');
             queryClient.invalidateQueries({ queryKey: ['application', appId] });

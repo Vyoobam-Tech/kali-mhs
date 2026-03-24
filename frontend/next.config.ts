@@ -72,9 +72,10 @@ const nextConfig: NextConfig = {
   //   - The middleware can read it (it only sees cookies from its own origin).
   //   - The browser sends it on every same-origin request (no SameSite issues).
   // Development: falls back to http://localhost:5000.
-  // Production: set BACKEND_URL to the deployed backend URL.
+  // Production: set NEXT_PUBLIC_API_URLto the deployed backend URL.
+
   async rewrites() {
-    const backendUrl = process.env.BACKEND_URL || 'http://localhost:5000';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL|| 'http://localhost:5000';
     return [
       {
         source: '/api/v1/:path*',

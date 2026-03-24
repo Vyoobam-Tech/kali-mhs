@@ -28,6 +28,7 @@ apiClient.interceptors.request.use(
 // Response interceptor — auto-logout on 401
 // Exception: do NOT redirect when the failing request is the refresh endpoint itself
 // (a 401 there simply means no session cookie is present — not a loop condition).
+
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
