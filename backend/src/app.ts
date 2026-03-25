@@ -9,6 +9,7 @@ import { applySecurity, rateLimiter } from '@middlewares/security';
 import { errorHandler, notFoundHandler } from '@middlewares/errorHandler';
 import { router as healthRouter } from '@routes/health';
 import { router as apiRouter } from '@routes/index';
+import cors from 'cors';
 
 class Server {
     private app: Application;
@@ -23,6 +24,19 @@ class Server {
     private setupMiddlewares(): void {
         // Trust proxy (for rate limiting behind reverse proxy)
         this.app.set('trust proxy', 1);
+
+            // ✅ CORS (ADD THIS AT TOP)
+    this.app.use(cors({
+        origin: [
+            "https://kalimhs.vercel.app",
+            "http://localhost:3000"
+        ],
+        methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
+        credentials: true
+    }));
+
+    // ✅ Handle preflight requests
+    this.app.options("*", cors());
 
         // Request logging
         if (config.server.isDevelopment) {
