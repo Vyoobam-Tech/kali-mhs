@@ -8,7 +8,7 @@ import { ValuesSection } from "@/components/features/about/ValuesSection";
 import { GlobalReachSection } from "@/components/features/about/GlobalReachSection";
 import { CtaSection } from "@/components/shared/CtaSection";
 
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/api/v1`;
+const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 async function getCMSPage(slug: string) {
   try {

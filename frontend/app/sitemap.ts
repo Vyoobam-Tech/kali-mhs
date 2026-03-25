@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://kalimhs.com';
-const API_URL = `${process.env.NEXT_PUBLIC_API_URL|| 'http://localhost:5000'}/api/v1`;
+const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 async function fetchJson<T>(endpoint: string): Promise<T | null> {
     try {

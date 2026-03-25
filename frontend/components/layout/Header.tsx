@@ -40,6 +40,7 @@ export function Header() {
   const { data: cmsData } = useQuery({
     queryKey: ['cms', 'nav-links'],
     queryFn: () => cmsApi.getBySlug('nav-links'),
+    staleTime: 1000 * 60 * 60, // 1 hour — nav links rarely change
   });
 
   const cms = (() => {
